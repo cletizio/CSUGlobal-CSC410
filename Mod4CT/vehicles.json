@@ -1,5 +1,5 @@
-{
-    "Vehicles": {
+  {
+   "Vehicles": {
       "Land Vehicles": {
         "Cars": {
           "Sedans": {
@@ -14,8 +14,33 @@
               "Competitors": "Porsche Taycan, Audi e-tron GT",
               "Notable Features": "Autopilot, Full Self-Driving Capability, Long Range Battery"
             }
+          },
+          "SUVs": {
+          },
+          "Trucks": {
           }
+        },
+        "Motorcycles": {
+        },
+        "Bicycles": {
         }
+      },
+      "Water Vehicles": {
+        "Boats": {
+          "Sailboats": {
+          },
+          "Motorboats": {
+          }
+        },
+        "Submarines": {
+        }
+      },
+      "Air Vehicles": {
+        "Airplanes": {
+          "Commercial":{},
+          "Private": {}
+        },
+        "Helicopters": {}
       }
     }
   }

@@ -1,3 +1,25 @@
+<!--MIT License
+
+Copyright (c) 2024 Chris Letizio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,10 +30,10 @@
       display: none; /* Hide all nested lists by default */
     }
     li {
-      cursor: pointer;
+      cursor: pointer; /* Change cursor to pointer for list items */
     }
     .frame-details {
-      margin-left: 20px;
+      margin-left: 20px; /* Indent frame details for better readability */
     }
     .expanded > ul {
       display: block; /* Show nested list when parent is expanded */
@@ -19,72 +41,52 @@
   </style>
 </head>
 <body>
+  <!-- Container for displaying the taxonomy -->
   <div id="taxonomy"></div>
+  <!-- Container for displaying the details of the selected frame -->
   <div id="frame"></div>
 
   <script>
-    const taxonomyData = {
-      "Vehicles": {
-        "Land Vehicles": {
-          "Cars": {
-            "Sedans": {
-              "Tesla Model S": {
-                "Manufacturer": "Tesla, Inc.",
-                "Electric Range": "396 miles",
-                "Top Speed": "155 mph",
-                "Acceleration": "0-60 mph in 2.3 seconds",
-                "Seating Capacity": "5",
-                "Price": "Starting at $79,990",
-                "Similar Models": ["Tesla Model 3", "Tesla Model X"],
-                "Competitors": ["Porsche Taycan", "Audi e-tron GT"],
-                "Notable Features": ["Autopilot", "Full Self-Driving Capability", "Long Range Battery"]
-              }
-            },
-            "SUVs":{},
-            "Trucks":{}
-          }
-        },
-        "Water Vehicles":{
-          "Boats":{
-            "Sailboats":{},
-            "Motorboats":{}
-          },
-          "Submarines":{}
-        },
-        "Air Vehicles":{
-          "Airplanes":{
-            "Commercial":{},
-            "Private":{}
-          },
-          "Helicopters":{}
+    // Fetch the taxonomy data from the JSON file
+    async function fetchTaxonomyData() {
+      try {
+        const response = await fetch('vehicles.json');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
         }
+        return await response.json();
+      } catch (error) {
+        console.error('Failed to fetch taxonomy data:', error);
+        return null;
       }
-    };
+    }
 
+    // Display the taxonomy in a hierarchical structure
     function displayTaxonomy(node, parentElement) {
       const ul = document.createElement('ul');
       for (const key in node) {
         const li = document.createElement('li');
         li.textContent = key;
         li.onclick = (event) => {
-          event.stopPropagation();
+          event.stopPropagation(); // Prevent event from bubbling up
           if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
             if (isTerminalNode(node[key])) {
-              displayFrame(node[key]);
+              displayFrame(node[key]); // Display frame if it's a terminal node
             } else {
-              clearFrame();
-              toggleSublistVisibility(li);
+              clearFrame(); // Clear frame if not a terminal node
+              toggleSublistVisibility(li); // Toggle visibility of sublist
             }
           }
         };
         ul.appendChild(li);
         if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
-          displayTaxonomy(node[key], li);
+          displayTaxonomy(node[key], li); // Recursively display nested taxonomy
         }
       }
       parentElement.appendChild(ul);
     }
 
+    // Check if a node is a terminal node (no nested objects)
     function isTerminalNode(node) {
       for (const key in node) {
         if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
@@ -94,6 +96,7 @@
       return true;
     }
 
+    // Toggle the visibility of a sublist
     function toggleSublistVisibility(element) {
       const sublist = element.querySelector('ul');
       if (sublist) {
@@ -105,11 +108,13 @@
       }
     }
 
+    // Clear the frame details display
     function clearFrame() {
       const frameDiv = document.getElementById('frame');
       frameDiv.innerHTML = '';
     }
 
+    // Display the details of a selected frame
     function displayFrame(data) {
       clearFrame();
       const frameDiv = document.getElementById('frame');
@@ -142,10 +147,16 @@
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const taxonomyDiv = document.getElementById('taxonomy');
-      displayTaxonomy(taxonomyData, taxonomyDiv);
-      document.querySelectorAll('#taxonomy > ul').forEach(ul => ul.style.display = 'block'); // Ensure the root level is visible
+    // Initialize the taxonomy display when the document is loaded
+    document.addEventListener('DOMContentLoaded', async () => {
+      const taxonomyData = await fetchTaxonomyData();
+      if (taxonomyData) {
+        const taxonomyDiv = document.getElementById('taxonomy');
+        displayTaxonomy(taxonomyData, taxonomyDiv);
+        document.querySelectorAll('#taxonomy > ul').forEach(ul => ul.style.display = 'block'); // Ensure the root level is visible
+      } else {
+        document.getElementById('taxonomy').textContent = 'Failed to load vehicle taxonomy.';
+      }
     });
   </script>
 </body>
