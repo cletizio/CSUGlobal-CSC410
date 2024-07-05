@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vehicle Taxonomy</title>
+  <style>
+    ul {
+      list-style-type: none;
+      display: none; /* Hide all nested lists by default */
+    }
+    li {
+      cursor: pointer;
+    }
+    .frame-details {
+      margin-left: 20px;
+    }
+    .expanded > ul {
+      display: block; /* Show nested list when parent is expanded */
+    }
+  </style>
+</head>
+<body>
+  <div id="taxonomy"></div>
+  <div id="frame"></div>
+
+  <script>
+    const taxonomyData = {
+      "Vehicles": {
+        "Land Vehicles": {
+          "Cars": {
+            "Sedans": {
+              "Tesla Model S": {
+                "Manufacturer": "Tesla, Inc.",
+                "Electric Range": "396 miles",
+                "Top Speed": "155 mph",
+                "Acceleration": "0-60 mph in 2.3 seconds",
+                "Seating Capacity": "5",
+                "Price": "Starting at $79,990",
+                "Similar Models": ["Tesla Model 3", "Tesla Model X"],
+                "Competitors": ["Porsche Taycan", "Audi e-tron GT"],
+                "Notable Features": ["Autopilot", "Full Self-Driving Capability", "Long Range Battery"]
+              }
+            },
+            "SUVs":{},
+            "Trucks":{}
+          }
+        },
+        "Water Vehicles":{
+          "Boats":{
+            "Sailboats":{},
+            "Motorboats":{}
+          },
+          "Submarines":{}
+        },
+        "Air Vehicles":{
+          "Airplanes":{
+            "Commercial":{},
+            "Private":{}
+          },
+          "Helicopters":{}
+        }
+      }
+    };
+
+    function displayTaxonomy(node, parentElement) {
+      const ul = document.createElement('ul');
+      for (const key in node) {
+        const li = document.createElement('li');
+        li.textContent = key;
+        li.onclick = (event) => {
+          event.stopPropagation();
+          if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
+            if (isTerminalNode(node[key])) {
+              displayFrame(node[key]);
+            } else {
+              clearFrame();
+              toggleSublistVisibility(li);
+            }
+          }
+        };
+        ul.appendChild(li);
+        if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
+          displayTaxonomy(node[key], li);
+        }
+      }
+      parentElement.appendChild(ul);
+    }
+
+    function isTerminalNode(node) {
+      for (const key in node) {
+        if (typeof node[key] === 'object' && !Array.isArray(node[key])) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function toggleSublistVisibility(element) {
+      const sublist = element.querySelector('ul');
+      if (sublist) {
+        if (sublist.style.display === 'none') {
+          sublist.style.display = 'block';
+        } else {
+          sublist.style.display = 'none';
+        }
+      }
+    }
+
+    function clearFrame() {
+      const frameDiv = document.getElementById('frame');
+      frameDiv.innerHTML = '';
+    }
+
+    function displayFrame(data) {
+      clearFrame();
+      const frameDiv = document.getElementById('frame');
+      if (typeof data === 'object' && !Array.isArray(data)) {
+        for (const key in data) {
+          const p = document.createElement('p');
+          if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
+            p.textContent = `${key}: `;
+            const subFrame = document.createElement('div');
+            subFrame.className = 'frame-details';
+            for (const subKey in data[key]) {
+              const subP = document.createElement('p');
+              if (Array.isArray(data[key][subKey])) {
+                subP.textContent = `${subKey}: ${data[key][subKey].join(', ')}`;
+              } else {
+                subP.textContent = `${subKey}: ${data[key][subKey]}`;
+              }
+              subFrame.appendChild(subP);
+            }
+            frameDiv.appendChild(p);
+            frameDiv.appendChild(subFrame);
+          } else if (Array.isArray(data[key])) {
+            p.textContent = `${key}: ${data[key].join(', ')}`;
+            frameDiv.appendChild(p);
+          } else {
+            p.textContent = `${key}: ${data[key]}`;
+            frameDiv.appendChild(p);
+          }
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const taxonomyDiv = document.getElementById('taxonomy');
+      displayTaxonomy(taxonomyData, taxonomyDiv);
+      document.querySelectorAll('#taxonomy > ul').forEach(ul => ul.style.display = 'block'); // Ensure the root level is visible
+    });
+  </script>
+</body>
+</html>

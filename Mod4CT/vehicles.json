@@ -1,0 +1,21 @@
+{
+    "Vehicles": {
+      "Land Vehicles": {
+        "Cars": {
+          "Sedans": {
+            "Tesla Model S": {
+              "Manufacturer": "Tesla, Inc.",
+              "Electric Range": "396 miles",
+              "Top Speed": "155 mph",
+              "Acceleration": "0-60 mph in 2.3 seconds",
+              "Seating Capacity": "5",
+              "Price": "Starting at $79,990",
+              "Similar Models": "Tesla Model 3, Tesla Model X",
+              "Competitors": "Porsche Taycan, Audi e-tron GT",
+              "Notable Features": "Autopilot, Full Self-Driving Capability, Long Range Battery"
+            }
+          }
+        }
+      }
+    }
+  }
